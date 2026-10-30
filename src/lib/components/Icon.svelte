@@ -1,7 +1,14 @@
-<script>
-  import { iconPath } from '../utils/icons.js';
+<script lang="ts">
+  import { iconPath } from '../utils/icons';
 
-  let { name = 'info', size = 18, stroke = 1.7, class: className = '' } = $props();
+  interface Props {
+    name?: string;
+    size?: number;
+    stroke?: number;
+    class?: string;
+  }
+
+  let { name = 'info', size = 18, stroke = 1.7, class: className = '' }: Props = $props();
   const paths = $derived(iconPath(name));
 </script>
 

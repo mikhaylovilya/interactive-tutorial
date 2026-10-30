@@ -1,3 +1,5 @@
+import type { Level } from './types';
+
 export const level4 = {
   id: 'extensions',
   number: 4,
@@ -542,4 +544,4 @@ CREATE INDEX idx_tracks_title ON tracks(title);`,
         'Ненулевой возврат из progress callback прерывает выполнение с SQLITE_INTERRUPT. Это кооперативный механизм: он срабатывает между opcode-ами, поэтому не гарантирует мгновенную остановку. Соединение остаётся рабочим, запрос можно повторить.'
     }
   ]
-};
+} satisfies Level;

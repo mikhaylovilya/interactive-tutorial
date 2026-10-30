@@ -1,5 +1,5 @@
-<script>
-  import { linePath, areaPath, series } from '../../utils/format.js';
+<script lang="ts">
+  import { linePath, areaPath, series } from '../../utils/format';
 
   const db = series(7, 48, 3.1, 0.5);
   const wal = [4, 6, 9, 14, 22, 31, 38, 12, 5, 4, 3, 8, 17, 26, 35, 9, 4, 3, 6, 13, 25, 36, 11, 5, 3, 4, 9, 19, 30, 37, 14, 6, 4, 3, 8, 16, 27, 34, 10, 4, 3, 7, 15, 24, 33, 12, 5, 4];

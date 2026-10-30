@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   const headerFields = [
     ['0', 'magic', '377f0682'],
     ['4', 'version', '3007000'],

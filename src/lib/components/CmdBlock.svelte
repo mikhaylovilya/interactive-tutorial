@@ -1,8 +1,18 @@
-<script>
-  import { highlight } from '../utils/highlight.js';
-  import { copyText } from '../utils/clipboard.js';
-  import { toast } from '../stores/toast.svelte.js';
+<script lang="ts">
+  import { highlight } from '../utils/highlight';
+  import { copyText } from '../utils/clipboard';
+  import { toast } from '../stores/toast.svelte';
   import Icon from './Icon.svelte';
+
+  interface Props {
+    code?: string;
+    lang?: string;
+    label?: string;
+    tag?: string;
+    bare?: boolean;
+    dense?: boolean;
+    copyable?: boolean;
+  }
 
   let {
     code = '',
@@ -12,7 +22,7 @@
     bare = false,
     dense = false,
     copyable = true
-  } = $props();
+  }: Props = $props();
 
   const html = $derived(highlight(code, lang));
   const showHeader = $derived(!bare && (label || tag || copyable));

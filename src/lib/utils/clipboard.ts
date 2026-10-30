@@ -2,7 +2,7 @@
  * Copy text to the clipboard with a fallback for older browsers / insecure
  * origins, where the async Clipboard API is unavailable.
  */
-export async function copyText(text) {
+export async function copyText(text: string): Promise<boolean> {
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);

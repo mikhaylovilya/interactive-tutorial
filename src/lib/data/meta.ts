@@ -1,4 +1,6 @@
-export const overview = {
+import type { HonestyNote, Overview, SourceGroup } from './types';
+
+export const overview: Overview = {
   eyebrow: 'интерактивный разбор · SQLite',
   title: 'Матрёшка мониторинга',
   accent: 'SQLite',
@@ -58,7 +60,7 @@ export const overview = {
   ]
 };
 
-export const sources = [
+export const sources: SourceGroup[] = [
   {
     group: 'SQLite: официальная документация',
     items: [
@@ -201,7 +203,7 @@ export const sources = [
   }
 ];
 
-export const honesty = [
+export const honesty: HonestyNote[] = [
   {
     title: 'Реальные выводы, но конкретная среда',
     text: 'Блоки с пометкой «реальный вывод» сняты на учебной базе: SQLite 3.43.2 (системная сборка) и 3.50.4 (официальная сборка инструментов), macOS. Числа циклов scanstatus, размеры кэша и latency зависят от машины и версии — важны отношения и методика, а не абсолютные значения.'

@@ -1,7 +1,16 @@
-<script>
+<script lang="ts">
   import CmdBlock from './CmdBlock.svelte';
 
-  let { title = '', tag = 'пример вывода', code = '', lang = 'text', live = false } = $props();
+  interface Props {
+    title?: string;
+    tag?: string;
+    code?: string;
+    lang?: string;
+    live?: boolean;
+  }
+
+  let { title = '', tag = 'пример вывода', code = '', lang = 'text', live = false }: Props =
+    $props();
 </script>
 
 <div class="term">

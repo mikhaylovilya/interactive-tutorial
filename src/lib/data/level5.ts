@@ -1,3 +1,5 @@
+import type { Level } from './types';
+
 export const level5 = {
   id: 'internals',
   number: 5,
@@ -609,4 +611,4 @@ ENABLE_STMT_SCANSTATUS`,
         'При SQLITE_DEFAULT_MEMSTATUS=0 глобальные счётчики памяти не ведутся и возвращают нули, хотя база работает нормально. Локальные db_status CACHE_USED/HIT/MISS при этом доступны. Поэтому сначала смотрят compile_options, а уже потом ищут утечку.'
     }
   ]
-};
+} satisfies Level;

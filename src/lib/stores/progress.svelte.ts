@@ -5,15 +5,41 @@
  * closed and resumed later. The store is intentionally small and synchronous:
  * quiz answers are tiny, so there is no need for a backend or IndexedDB.
  */
-import { levels } from './data/levels.js';
+import { levels } from '../data/levels';
+import type { Level } from '../data/types';
 
 const STORAGE_KEY = 'sqlite-matryoshka:progress:v1';
 const THEME_KEY = 'sqlite-matryoshka:theme';
 const VERSION = 1;
 
-const clone = (value) => JSON.parse(JSON.stringify(value));
+export type Theme = 'dark' | 'light';
 
-function freshAnswers() {
+export interface AnswerState {
+  selected: number | null;
+  checked: boolean;
+}
+
+export type AnswerMap = Record<string, AnswerState[]>;
+
+export interface LevelStats {
+  total: number;
+  answered: number;
+  checked: number;
+  correct: number;
+  done: boolean;
+  hasWrong: boolean;
+}
+
+interface StoredProgress {
+  version: number;
+  answers: AnswerMap;
+  visited: string[];
+  lastLevel: number;
+}
+
+const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+
+function freshAnswers(): AnswerMap {
   return Object.fromEntries(
     levels.map((level) => [
       level.id,
@@ -22,7 +48,7 @@ function freshAnswers() {
   );
 }
 
-function readStorage(key) {
+function readStorage(key: string): string | null {
   try {
     return localStorage.getItem(key);
   } catch {
@@ -30,7 +56,7 @@ function readStorage(key) {
   }
 }
 
-function writeStorage(key, value) {
+function writeStorage(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
   } catch {
@@ -39,9 +65,9 @@ function writeStorage(key, value) {
 }
 
 class ProgressStore {
-  answers = $state(freshAnswers());
-  visited = $state([]);
-  theme = $state('dark');
+  answers = $state<AnswerMap>(freshAnswers());
+  visited = $state<string[]>([]);
+  theme = $state<Theme>('dark');
   lastLevel = $state(1);
 
   constructor() {
@@ -50,12 +76,12 @@ class ProgressStore {
     this.#hydrate();
   }
 
-  #hydrate() {
+  #hydrate(): void {
     const raw = readStorage(STORAGE_KEY);
     if (!raw) return;
     try {
-      const saved = JSON.parse(raw);
-      if (saved?.version !== VERSION) return;
+      const saved = JSON.parse(raw) as Partial<StoredProgress>;
+      if (saved.version !== VERSION) return;
 
       for (const level of levels) {
         const stored = saved.answers?.[level.id];
@@ -65,7 +91,7 @@ class ProgressStore {
           if (!item) return;
           const max = level.quiz[index].options.length - 1;
           const selected =
-            Number.isInteger(item.selected) && item.selected >= 0 && item.selected <= max
+            Number.isInteger(item.selected) && item.selected! >= 0 && item.selected! <= max
               ? item.selected
               : null;
           this.answers[level.id][index] = {
@@ -81,35 +107,33 @@ class ProgressStore {
       }
 
       if (Number.isInteger(saved.lastLevel)) {
-        this.lastLevel = Math.min(5, Math.max(1, saved.lastLevel));
+        this.lastLevel = Math.min(5, Math.max(1, saved.lastLevel!));
       }
     } catch {
       /* Corrupted payload: start fresh instead of breaking the app. */
     }
   }
 
-  #save() {
-    writeStorage(
-      STORAGE_KEY,
-      JSON.stringify({
-        version: VERSION,
-        answers: clone(this.answers),
-        visited: [...this.visited],
-        lastLevel: this.lastLevel
-      })
-    );
+  #save(): void {
+    const payload: StoredProgress = {
+      version: VERSION,
+      answers: clone(this.answers),
+      visited: [...this.visited],
+      lastLevel: this.lastLevel
+    };
+    writeStorage(STORAGE_KEY, JSON.stringify(payload));
   }
 
-  setTheme(theme) {
+  setTheme(theme: Theme): void {
     this.theme = theme === 'light' ? 'light' : 'dark';
     writeStorage(THEME_KEY, this.theme);
   }
 
-  toggleTheme() {
+  toggleTheme(): void {
     this.setTheme(this.theme === 'dark' ? 'light' : 'dark');
   }
 
-  markVisited(levelId) {
+  markVisited(levelId: string): void {
     if (!this.visited.includes(levelId)) {
       this.visited = [...this.visited, levelId];
       this.#save();
@@ -121,7 +145,7 @@ class ProgressStore {
     }
   }
 
-  stats(level) {
+  stats(level: Level): LevelStats {
     const items = this.answers[level.id] ?? [];
     let correct = 0;
     let answered = 0;
@@ -141,67 +165,67 @@ class ProgressStore {
       done: correct === level.quiz.length && checked === level.quiz.length,
       hasWrong: level.quiz.some((question, index) => {
         const item = items[index];
-        return item?.checked && item.selected !== question.correct;
+        return Boolean(item?.checked && item.selected !== question.correct);
       })
     };
   }
 
-  get totalQuestions() {
+  get totalQuestions(): number {
     return levels.reduce((sum, level) => sum + level.quiz.length, 0);
   }
 
-  get totalCorrect() {
+  get totalCorrect(): number {
     return levels.reduce((sum, level) => sum + this.stats(level).correct, 0);
   }
 
-  get completedLevels() {
+  get completedLevels(): number {
     return levels.filter((level) => this.stats(level).done).length;
   }
 
   /** Overall progress in percent, based on correctly answered questions. */
-  get overall() {
+  get overall(): number {
     return Math.round((this.totalCorrect / this.totalQuestions) * 100);
   }
 
-  get lastVisitedLevel() {
+  get lastVisitedLevel(): Level {
     return levels[Math.min(levels.length, Math.max(1, this.lastLevel)) - 1];
   }
 
-  get nextLevel() {
+  get nextLevel(): Level {
     return levels.find((level) => !this.stats(level).done) ?? levels[levels.length - 1];
   }
 
-  select(level, questionIndex, optionIndex) {
-    const item = this.answers[level.id][questionIndex];
+  select(level: Level, questionIndex: number, optionIndex: number): void {
+    const item = this.answers[level.id]?.[questionIndex];
     if (!item || item.checked) return;
     item.selected = optionIndex;
     this.#save();
   }
 
-  check(level, questionIndex) {
-    const item = this.answers[level.id][questionIndex];
+  check(level: Level, questionIndex: number): void {
+    const item = this.answers[level.id]?.[questionIndex];
     if (!item || item.selected === null) return;
     item.checked = true;
     this.#save();
   }
 
-  retry(level, questionIndex) {
-    const item = this.answers[level.id][questionIndex];
+  retry(level: Level, questionIndex: number): void {
+    const item = this.answers[level.id]?.[questionIndex];
     if (!item) return;
     item.selected = null;
     item.checked = false;
     this.#save();
   }
 
-  resetLevel(levelId) {
-    this.answers[levelId] = levels
-      .find((level) => level.id === levelId)
-      .quiz.map(() => ({ selected: null, checked: false }));
+  resetLevel(levelId: string): void {
+    const level = levels.find((item) => item.id === levelId);
+    if (!level) return;
+    this.answers[levelId] = level.quiz.map(() => ({ selected: null, checked: false }));
     this.visited = this.visited.filter((id) => id !== levelId);
     this.#save();
   }
 
-  resetAll() {
+  resetAll(): void {
     this.answers = freshAnswers();
     this.visited = [];
     this.lastLevel = 1;

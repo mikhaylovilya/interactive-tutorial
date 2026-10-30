@@ -31,7 +31,25 @@ const C_KEYWORDS = new Set(
 
 const YAML_KEYWORDS = new Set(['true', 'false', 'null', 'yes', 'no', 'on', 'off']);
 
-export const LANGS = {
+export type LangName =
+  | 'sql'
+  | 'cli'
+  | 'shell'
+  | 'python'
+  | 'c'
+  | 'yaml'
+  | 'promql'
+  | 'text';
+
+export interface LangSpec {
+  keywords: Set<string>;
+  caseInsensitive?: boolean;
+  prompt?: boolean;
+  comment?: string | null;
+  yamlKeys?: boolean;
+}
+
+export const LANGS: Record<LangName, LangSpec> = {
   sql: {
     keywords: SQL_KEYWORDS,
     caseInsensitive: true,
@@ -70,7 +88,7 @@ export const LANGS = {
   text: { keywords: new Set(), comment: null }
 };
 
-const ESCAPES = {
+const ESCAPES: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
@@ -78,10 +96,11 @@ const ESCAPES = {
   "'": '&#39;'
 };
 
-const escapeHtml = (value) => value.replace(/[&<>"']/g, (ch) => ESCAPES[ch]);
+const escapeHtml = (value: string): string =>
+  value.replace(/[&<>"']/g, (ch) => ESCAPES[ch] ?? ch);
 
-function buildPattern(spec) {
-  const parts = [];
+function buildPattern(spec: LangSpec): string {
+  const parts: string[] = [];
 
   if (spec.comment) parts.push(`(?<comment>${spec.comment})`);
   parts.push(`(?<string>'(?:[^'\\\\]|\\\\.)*'|"(?:[^"\\\\]|\\\\.)*")`);
@@ -96,18 +115,19 @@ function buildPattern(spec) {
 
 const PATTERNS = Object.fromEntries(
   Object.entries(LANGS).map(([name, spec]) => [name, new RegExp(buildPattern(spec), 'gm')])
-);
+) as Record<LangName, RegExp>;
 
 /**
- * @param {string} code
- * @param {keyof typeof LANGS} [lang]
- * @returns {string} safe HTML
+ * Tokenise code and return safe HTML.
+ *
+ * Unknown languages fall back to plain escaped text instead of throwing, so a
+ * typo in a content file cannot break the page.
  */
-export function highlight(code = '', lang = 'text') {
-  const spec = LANGS[lang] ?? LANGS.text;
+export function highlight(code = '', lang = 'text'): string {
+  const spec = LANGS[lang as LangName] ?? LANGS.text;
   if (lang === 'text' || !code) return escapeHtml(String(code));
 
-  const re = new RegExp(PATTERNS[lang].source, 'gm');
+  const re = new RegExp((PATTERNS[lang as LangName] ?? PATTERNS.text).source, 'gm');
   let out = '';
   let lastIndex = 0;
   let match;
@@ -117,7 +137,7 @@ export function highlight(code = '', lang = 'text') {
       out += escapeHtml(code.slice(lastIndex, match.index));
     }
 
-    const groups = match.groups ?? {};
+    const groups: Record<string, string> = match.groups ?? {};
     let className = '';
 
     if (groups.comment) className = 'comment';

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   /**
    * Decorative hero: five nested dolls, one per monitoring layer.
    * Purely presentational, so it is hidden from assistive technology.

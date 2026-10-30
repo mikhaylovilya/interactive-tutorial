@@ -1,6 +1,6 @@
 let uid = 0;
 
-const PATHS = {
+const PATHS: Record<string, string[]> = {
   cpu: [
     'M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2',
     'M6 6h12v12H6z',
@@ -38,11 +38,11 @@ const PATHS = {
   db: ['M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3z', 'M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6', 'M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6']
 };
 
-export function iconPath(name) {
+export function iconPath(name: string): string[] {
   return PATHS[name] ?? PATHS.info;
 }
 
-export function nextUid() {
+export function nextUid(): string {
   uid += 1;
   return `u${uid}`;
 }

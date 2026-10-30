@@ -1,3 +1,5 @@
+import type { Level } from './types';
+
 export const level2 = {
   id: 'external',
   number: 2,
@@ -580,4 +582,4 @@ ok
         'Нужно сочетание «WAL большой» и «он не уменьшается»: это гипотеза о долгом читателе или невыполняющемся checkpoint. Абсолютный размер базы слишком груб, up==1 не говорит о WAL, а rate по gauge page_count вообще некорректен.'
     }
   ]
-};
+} satisfies Level;

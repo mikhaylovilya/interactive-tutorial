@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   // Real dbstat output on the tutorial database after deleting 10 000 rows from plays.
   const rows = [
     { name: 'idx_plays_track', pages: 325, unused: 31.9 },

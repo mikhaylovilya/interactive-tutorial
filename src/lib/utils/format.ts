@@ -1,11 +1,15 @@
 /** Helpers for the miniature charts drawn in the UI (no chart library). */
 
-/**
- * Build a polyline/path for a series.
- * @param {number[]} values
- * @param {{ width?: number, height?: number, pad?: number, min?: number, max?: number }} [options]
- */
-export function linePath(values, options = {}) {
+export interface ChartOptions {
+  width?: number;
+  height?: number;
+  pad?: number;
+  min?: number;
+  max?: number;
+}
+
+/** Build a polyline path for a series. */
+export function linePath(values: number[], options: ChartOptions = {}): string {
   const { width = 600, height = 180, pad = 10, min, max } = options;
   if (!values.length) return '';
 
@@ -23,7 +27,8 @@ export function linePath(values, options = {}) {
     .join(' ');
 }
 
-export function areaPath(values, options = {}) {
+/** Close a line path into a filled area down to the chart baseline. */
+export function areaPath(values: number[], options: ChartOptions = {}): string {
   if (!values.length) return '';
   const { width = 600, height = 180, pad = 10 } = options;
   const line = linePath(values, options);
@@ -33,8 +38,8 @@ export function areaPath(values, options = {}) {
 }
 
 /** Deterministic pseudo-random series so the visual layout stays stable. */
-export function series(seed, length, base = 50, spread = 20) {
-  const out = [];
+export function series(seed: number, length: number, base = 50, spread = 20): number[] {
+  const out: number[] = [];
   let state = seed;
   for (let i = 0; i < length; i += 1) {
     state = (state * 1664525 + 1013904223) % 4294967296;
@@ -45,11 +50,11 @@ export function series(seed, length, base = 50, spread = 20) {
   return out;
 }
 
-export function formatInt(value) {
+export function formatInt(value: number): string {
   return new Intl.NumberFormat('ru-RU').format(value);
 }
 
-export function formatBytes(bytes) {
+export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const exponent = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
@@ -57,4 +62,5 @@ export function formatBytes(bytes) {
   return `${value >= 10 || exponent === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[exponent]}`;
 }
 
-export const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+export const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));

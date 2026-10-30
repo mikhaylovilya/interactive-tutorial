@@ -1,3 +1,5 @@
+import type { Level } from './types';
+
 export const level3 = {
   id: 'builtin',
   number: 3,
@@ -566,4 +568,4 @@ ok
         'page_count × page_size — логический размер базы. Файл может быть больше из-за свободных страниц (freelist), отдельного -wal и разреженности, а также меньше логического размера при sparse-файлах. Поэтому сравнивать ls и PRAGMA нужно осознанно.'
     }
   ]
-};
+} satisfies Level;

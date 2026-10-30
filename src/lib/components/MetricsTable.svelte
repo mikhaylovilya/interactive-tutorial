@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
   import Icon from './Icon.svelte';
+  import type { MetricRow } from '../data/types';
 
-  let { metrics = [] } = $props();
+  interface Props {
+    metrics?: MetricRow[];
+  }
+
+  let { metrics = [] }: Props = $props();
 </script>
 
 <div class="metrics">
