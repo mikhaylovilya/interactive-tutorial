@@ -44,6 +44,7 @@
 
 <style>
   .metrics {
+    min-width: 0;
     border: 1px solid var(--border);
     border-radius: 14px;
     overflow: hidden;
@@ -126,7 +127,7 @@
     min-width: 200px;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1120px) {
     thead {
       display: none;
     }

@@ -23,12 +23,14 @@
     <div class="bars__row">
       <span class="bars__name">{row.name}</span>
       <div class="bars__track">
-        <div
-          class="bars__bar"
-          style={`width: ${Math.max(4, (row.pages / max) * 100)}%`}
-        >
-          <span class="bars__used" style={`width: ${100 - row.unused}%`}></span>
-          <span class="bars__unused" style={`width: ${row.unused}%`}></span>
+        <div class="bars__plot">
+          <div
+            class="bars__bar"
+            style={`width: ${Math.max(4, (row.pages / max) * 100)}%`}
+          >
+            <span class="bars__used" style={`width: ${100 - row.unused}%`}></span>
+            <span class="bars__unused" style={`width: ${row.unused}%`}></span>
+          </div>
         </div>
         <span class="bars__value">{row.pages} стр. · {row.unused}%</span>
       </div>
@@ -92,6 +94,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+  }
+
+  .bars__plot {
+    flex: 1;
     min-width: 0;
   }
 

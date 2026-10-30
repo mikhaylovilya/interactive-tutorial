@@ -56,8 +56,10 @@
   </div>
   <p class="io__note">
     <Icon name="info" size={14} />
-    Каждый инструмент видит только свой участок пути. <code>strace</code> покажет fsync, но не объяснит,
-    какой запрос его вызвал; <code>scanstatus</code> покажет циклы, но не latency диска.
+    <span>
+      Каждый инструмент видит только свой участок пути. <code>strace</code> покажет fsync, но не объяснит,
+      какой запрос его вызвал; <code>scanstatus</code> покажет циклы, но не latency диска.
+    </span>
   </p>
 </div>
 
@@ -153,6 +155,10 @@
     flex: none;
     margin-top: 2px;
     color: var(--lvl-1);
+  }
+
+  .io__note span {
+    min-width: 0;
   }
 
   .io__note code {

@@ -591,3 +591,39 @@ img {
     padding: 14px 15px;
   }
 }
+
+/* =========================================================
+   Syntax highlighting tokens
+   Produced by src/lib/utils/highlight.ts, inserted with {@html}.
+   ========================================================= */
+.tok-keyword {
+  color: color-mix(in srgb, var(--accent) 82%, var(--text));
+  font-weight: 600;
+}
+
+.tok-string {
+  color: color-mix(in srgb, var(--ok) 72%, var(--text));
+}
+
+.tok-number {
+  color: color-mix(in srgb, var(--warn) 78%, var(--text));
+}
+
+.tok-comment {
+  color: var(--dim);
+  font-style: italic;
+}
+
+.tok-prompt {
+  color: var(--accent);
+  opacity: 0.8;
+  user-select: none;
+}
+
+.tok-key {
+  color: color-mix(in srgb, var(--accent-2, var(--warn)) 68%, var(--text));
+}
+
+.tok-dot {
+  color: color-mix(in srgb, var(--accent) 70%, var(--text));
+}

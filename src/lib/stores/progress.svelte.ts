@@ -155,7 +155,9 @@ class ProgressStore {
       if (!item || item.selected === null) return;
       answered += 1;
       if (item.checked) checked += 1;
-      if (item.selected === question.correct) correct += 1;
+      // Only verified answers count: selecting an option must not reveal whether
+      // it is correct through the progress meter.
+      if (item.checked && item.selected === question.correct) correct += 1;
     });
     return {
       total: level.quiz.length,
