@@ -41,6 +41,14 @@ npm run preview    # локальный просмотр собранной ве
 
 Сборка использует `base: './'` и hash-роутинг, поэтому `dist/` можно разместить в любом подкаталоге статического хостинга. Открывать `index.html` через `file://` нельзя: браузер заблокирует ES-модули — нужен HTTP-сервер.
 
+## GitHub Pages
+
+Сайт публикуется автоматически при пуше в `master` (workflow `.github/workflows/deploy-pages.yml`).
+
+URL: https://mikhaylovilya.github.io/interactive-tutorial/
+
+В настройках репозитория: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
 ## Структура
 
 ```
